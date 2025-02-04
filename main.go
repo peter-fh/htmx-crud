@@ -44,6 +44,8 @@ func Homepage (w http.ResponseWriter, r *http.Request) {
 
 func AddTask(w http.ResponseWriter, r *http.Request) {
 	task := r.FormValue("task")
+	log.Println(task)
+	w.Header().Add("HX-Trigger", "loadList")
 	err := Database.AddTask(db, task)
 	if err != nil {
 		log.Fatalf("Failed to add task: %v", err)
@@ -51,25 +53,30 @@ func AddTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
-}
-
-
-
-func TaskHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("hi")
-	switch r.Method {
-	case http.MethodPost:
-		AddTask(w, r)
-	default:
-		log.Fatalln("Incorrect method to /task")
-	}
 	allTasks := Database.GetAllTasks(db)
+
+	tmpl.ExecuteTemplate(w, "todoList", allTasks)
+	log.Println("Printing current task list:")
 	for _, task := range allTasks {
 		fmt.Println(task.Name)
 	}
 }
 
+func TaskHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		AddTask(w, r)
+	case http.MethodGet:
+		GetTasks(w, r)
+	default:
+		log.Fatalln("Incorrect method to /task")
+	}
+
+}
+
 func main() {
+	port := 4000
+	log.Printf("Starting server on port %d", port)
 
 	http.HandleFunc("/", Homepage)
 	http.HandleFunc("/task", TaskHandler)

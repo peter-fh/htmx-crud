@@ -1,6 +1,8 @@
 {{define "addTaskForm"}}
 <form>
 	<input type="text" name="task" placeholder="Enter new task">
-	<button type="submit" hx-post="/task" hx-swap="none">Add Task</button>
+	<button type="submit" hx-post="/task" hx-target="#tasksList" hx-swap="afterbegin">
+		Add Task
+	</button>
 </form>
 {{end}}
