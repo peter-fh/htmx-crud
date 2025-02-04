@@ -1,0 +1,14 @@
+{{ define "todoList" }}
+<ul>
+	{{ range . }}
+	<li>
+		{{ if .Done }} 
+		<s> {{ .Name }} </s>
+		{{ else }}
+		<p> {{ .Name }} </p>
+		{{ end }}
+	</li>
+	{{ end }}
+
+</ul>
+{{ end }}
